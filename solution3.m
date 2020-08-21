@@ -69,10 +69,11 @@ for i = 1:1:length(num)
     for j = 1:1:length(num)
         d_point(i, j) = getDistance(num(i, 1:1:2), num(j, 1:1:2));
     end
-    scores(i, 1) = num(i, 3);
+    scores(i, 1) = num(i, 6);
 end
 
-isPacked = zeros(length(num), 1);
+%打包
+isPacked = zeros(length(num), 2);
 for i = 1:1:length(num)
     minAct = 1;
     index = 0;
@@ -91,11 +92,13 @@ for i = 1:1:length(num)
         if minAct < 0.1 && minAct > 0
             isPacked(i, 1) = 1;
             isPacked(index, 1) = 1;
+            isPacked(i, 2) = index;
+            isPacked(index, 2) = i;
         end
     end
 end
 
-len = sum(isPacked);
+len = sum(isPacked(:, 1));
 num1 = zeros(len, 2);
 num0 = zeros(length(num)-len, 2);
 index1 = 1;
@@ -121,4 +124,50 @@ xlabel('经度/°');
 ylabel('纬度/°');
 legend('打包点', '未打包点');
 
-% sum(isPacked)
+%% 获得打包方案和定价方案
+index = 1;
+packages = [0, 0;
+                  0, 0];
+for i = 1:1:length(isPacked)
+    if isPacked(i, 2) ~= 0
+        isSole = 1;
+        for j = 1:1:length(packages)
+            if i == packages(j, 2)
+                isSole = 0;
+                break;
+            end
+        end
+        if isSole
+            packages(index, 1) = i;
+            packages(index, 2) = isPacked(i, 2);
+            index = index+1;
+        end
+    end
+end
+
+%% 计算价格
+packagesScore = zeros(length(packages), 1);
+num_new = zeros(length(packages), 2);
+for i = 1:1:length(packages)
+    packagesScore(i, 1) = round(2*0.92*(scores(packages(i, 1))+scores(packages(i, 2))))/2;
+    num_new(i, :) = 1/2*[num(packages(i, 1), 1)+num(packages(i, 2), 1),...
+        num(packages(i, 1), 2)+num(packages(i, 2), 2)];
+end
+
+%% 去掉打包后的经纬度
+num_all = zeros(length(num)-2*length(packages), 3);
+index = 1;
+for i = 1:1:length(num)
+    isExist = 0;
+    for j = 1:1:length(packages)
+        if i == packages(j, 1) || i == packages(j, 2)
+            isExist = 1;
+            break;
+        end
+    end
+    if ~isExist
+        num_all(index, 1:1:2) = num(i, 1:1:2);
+        num_all(index, 3) = num(i, 6);
+        index = index+1;
+    end
+end
