@@ -21,7 +21,7 @@ location = [longitudes, latitudes];
 
 %读取excel表任务点数据
 filePath = 'E:\学习文件\数模\培训\模拟题\模拟题4\题设数据';
-fileName = '附件一：已结束项目任务数据.xls';
+fileName = '附件一：已结束项目任务数据 - 副本.xls';
 num = xlsread([filePath, '\', fileName]);
 close all;
 
@@ -39,25 +39,25 @@ for i = 1:1:length(num)
         d1(index1, 1) = D(i, 1);
         num1(index1, 1) = num(i, 1);
         num1(index1, 2) = num(i, 2);
-        scores1(index1, 1) = num(i, 3);
+        scores1(index1, 1) = num(i, 5);
         index1 = index1+1;
     elseif idx(i) == 2
         d2(index2, 1) = D(i, 2);
         num2(index2, 1) = num(i, 1);
         num2(index2, 2) = num(i, 2);
-        scores2(index2, 1) = num(i, 3);
+        scores2(index2, 1) = num(i, 5);
         index2 = index2+1;
     elseif idx(i) == 3
         d3(index3, 1) = D(i, 3);
         num3(index3, 1) = num(i, 1);
         num3(index3, 2) = num(i, 2);
-        scores3(index3, 1) = num(i, 3);
+        scores3(index3, 1) = num(i, 5);
         index3 = index3+1;
     elseif idx(i) == 4
         d4(index4, 1) = D(i, 4);
         num4(index4, 1) = num(i, 1);
         num4(index4, 2) = num(i, 2);
-        scores4(index4, 1) = num(i, 3);
+        scores4(index4, 1) = num(i, 5);
         index4 = index4+1;
     end
 end

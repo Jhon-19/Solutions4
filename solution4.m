@@ -21,32 +21,17 @@ location = [longitudes, latitudes];
 
 %读取excel表任务点数据
 filePath = 'E:\学习文件\数模\培训\模拟题\模拟题4\题设数据';
-fileName = '附件一：已结束项目任务数据.xls';
+fileName = '附件三：新项目任务数据.xls';
 num = xlsread([filePath, '\', fileName]);
 close all;
-% %提取有效数据
-% len = length(num);
-% index0 = 1;
-% index1 = 1;
-% for i = 1:1:len
-%     if checkData([num(i, 1), num(i, 2)])
-%         if num(i, 4) == 0
-%             num0(index0, 1) = num(i, 1);
-%             num0(index0, 2) = num(i, 2);
-%     %         num0(index0, 3) = num(i, 3);
-%             scores0(index0, 1) = num(i, 3);
-%             index0 = index0+1;
-%         elseif num(i, 4) == 1
-%             num1(index1, 1) = num(i, 1);
-%             num1(index1, 2) = num(i, 2);
-%     %         num1(index1, 3) = num(i, 3);
-%             scores1(index1, 1) = num(i, 3);
-%             index1 = index1+1;
-%         end
-%     end
-% end
-%%
+figure;
+plot(num(:, 1), num(:, 2), '.');
+grid on;
+title('新任务分布图');
+xlabel('经度/°');
+ylabel('纬度/°');
 
+%% 聚类分析
 data1 = num(:, 1:1:2);
 % eva = evalclusters(data1, 'kmeans', 'CalinskiHarabasz', 'KList', [1:10]);
 k = 4;
@@ -58,66 +43,24 @@ index4 = 1;
 for i = 1:1:length(num)
     if idx(i) == 1
         d1(index1, 1) = D(i, 1);
-        num1(index1, 1) = num(i, 1);
-        num1(index1, 2) = num(i, 2);
-        scores1(index1, 1) = num(i, 3);
+        num1(index1, :) = num(i, :);
         index1 = index1+1;
     elseif idx(i) == 2
-        d2(index2, 1) = D(i, 2);
-        num2(index2, 1) = num(i, 1);
-        num2(index2, 2) = num(i, 2);
-        scores2(index2, 1) = num(i, 3);
+        d2(index2, 1) = D(i, 2);       
+        num2(index2, :) = num(i, :);
         index2 = index2+1;
     elseif idx(i) == 3
-        d3(index3, 1) = D(i, 3);
-        num3(index3, 1) = num(i, 1);
-        num3(index3, 2) = num(i, 2);
-        scores3(index3, 1) = num(i, 3);
+        d3(index3, 1) = D(i, 3);       
+        num3(index3, :) = num(i, :);
         index3 = index3+1;
     elseif idx(i) == 4
-        d4(index4, 1) = D(i, 4);
-        num4(index4, 1) = num(i, 1);
-        num4(index4, 2) = num(i, 2);
-        scores4(index4, 1) = num(i, 3);
+        d4(index4, 1) = D(i, 4);       
+        num4(index4, :) = num(i, :);
         index4 = index4+1;
     end
 end
 
-% 距离的回归分析
-x1 = d1(:, 1);
-y1 = scores1(:, 1);
-X = [ones(size(y1)), x1, x1.^2, x1.^3];
-[b1,bint1,r1,rint1,status1] = regress(y1, X);
-status1
-disp(['第一类回归分析 : ', 'y1 = ', num2str(b1(1)), '+', num2str(b1(2)), '*x1+', ...
-    num2str(b1(3)), '*x1^2+', num2str(b1(4)), '*x1^3']);
-
-x2 = d2(:, 1);
-y2 = scores2(:, 1);
-X = [ones(size(y2)), x2, x2.^2, x2.^3];
-[b2,bint2,r2,rint2,status2] = regress(y2, X);
-status2
-disp(['第二类回归分析 : ', 'y2 = ', num2str(b2(1)), '+', num2str(b2(2)), '*x2+', ...
-    num2str(b2(3)), '*x2^2+', num2str(b2(4)), '*x2^3']);
-
-x3 = d3(:, 1);
-y3 = scores3(:, 1);
-X = [ones(size(y3)), x3, x3.^2, x3.^3];
-[b3,bint3,r3,rint3,status3] = regress(y3, X);
-status3
-disp(['第三类回归分析 : ', 'y3 = ', num2str(b3(1)), '+', num2str(b3(2)), '*x3+', ...
-    num2str(b3(3)), '*x3^2+', num2str(b3(4)), '*x3^3']);
-
-x4 = d1(:, 1);
-y4 = scores1(:, 1);
-X = [ones(size(y4)), x4, x4.^2, x4.^3];
-[b4,bint4,r4,rint4,status4] = regress(y4, X);
-status4
-disp(['第四类回归分析 : ', 'y4 = ', num2str(b4(1)), '+', num2str(b4(2)), '*x4+', ...
-    num2str(b4(3)), '*x4^2+', num2str(b4(4)), '*x4^3']);
-
-ss = [b1, b2, b3, b4];%四个类的距离系数（列升幂排列）
-%% 会员数量的回归分析
+%% 会员数量的计算
 d1_point = zeros(length(num1), length(location));
 for i = 1:1:length(num1)
     for j = 1:1:length(location)
@@ -182,42 +125,16 @@ for i = 1:1:length(num4)
     end
 end
 
-%%
-x1 = count1(:, 1);
-y1 = scores1(:, 1);
-X = [ones(size(y1)), x1, x1.^2];
-[b1,bint1,r1,rint1,status1] = regress(y1, X);
-status1
-disp(['第一类回归分析 : ', 'y1 = ', num2str(b1(1)), '+', num2str(b1(2)), '*x1+', ...
-    num2str(b1(3)), '*x1^2']);
-
-x2 = count2(:, 1);
-y2 = scores2(:, 1);
-X = [ones(size(y2)), x2, x2.^2];
-[b2,bint2,r2,rint2,status2] = regress(y2, X);
-status2
-disp(['第二类回归分析 : ', 'y2 = ', num2str(b2(1)), '+', num2str(b2(2)), '*x2+', ...
-    num2str(b2(3)), '*x2^2']);
-
-x3 = count3(:, 1);
-y3 = scores3(:, 1);
-X = [ones(size(y3)), x3, x3.^2];
-[b3,bint3,r3,rint3,status3] = regress(y3, X);
-status3
-disp(['第三类回归分析 : ', 'y3 = ', num2str(b3(1)), '+', num2str(b3(2)), '*x3+', ...
-    num2str(b3(3)), '*x3^2']);
-
-x4 = count1(:, 1);
-y4 = scores1(:, 1);
-X = [ones(size(y4)), x4, x4.^2];
-[b4,bint4,r4,rint4,status4] = regress(y4, X);
-status4
-disp(['第四类回归分析 : ', 'y4 = ', num2str(b4(1)), '+', num2str(b4(2)), '*x4+', ...
-    num2str(b4(3)), '*x4^2']);
-
-ns = [b1, b2, b3, b4];%四个类的会员数量系数（列升幂排列）
-
-%% 计算新定价
+%引用第二问的定价模型
+ss = 1.0e+03*[ 0.067134906547233, 0.068635245895575, 0.067499062763727, 0.067134906547233;
+               0.034343665144235, 0.037598763863261, 0.121371320900556, 0.034343665144235;
+               0.023949107998428, 0.046537324746500, -1.174324573371970, 0.023949107998428;
+               1.097232248756462, -0.352667931535862, 5.907969268123837, 1.097232248756462];
+ns = [78.960246476307276, 74.388692159002133, 73.900496260424845, 78.960246476307276;
+      -0.794911872842428, -0.360647200425248, -0.183680644106105, -0.794911872842428;
+       0.011807863766947, 0.001096376990613, -0.015771459988584, 0.011807863766947];
+           
+%% 计算定价
 price_new1 = getPrice(ss(:, 1), ns(:, 1), d1, count1);
 price_new2 = getPrice(ss(:, 2), ns(:, 2), d2, count2);
 price_new3 = getPrice(ss(:, 3), ns(:, 3), d3, count3);
@@ -248,3 +165,62 @@ for i = 1:1:length(num)
         index4 = index4+1;
     end
 end
+
+%% 打包
+scores = zeros(length(num), 1);
+d_point = zeros(length(num), length(num));
+for i = 1:1:length(num)
+    for j = 1:1:length(num)
+        d_point(i, j) = getDistance(num(i, 1:1:2), num(j, 1:1:2));
+    end
+    scores(i, 1) = price_new(i, 1);
+end
+
+isPacked = zeros(length(num), 1);
+for i = 1:1:length(num)
+    minAct = 1;
+    index = 0;
+    if isPacked(i) == 0
+        for j = 1:1:length(num)
+            if isPacked(j) == 0
+                if d_point(i, j) < 1.5 && j ~= i
+                    thisAct = getAct(scores(i, 1), scores(j, 1), d_point(i, j));
+                    if thisAct < minAct
+                        minAct = thisAct;
+                        index = j;
+                    end
+                end
+            end
+        end
+        if minAct < 0.8 && minAct > 0
+            isPacked(i, 1) = 1;
+            isPacked(index, 1) = 1;
+        end
+    end
+end
+
+len = sum(isPacked);
+num1 = zeros(len, 2);
+num0 = zeros(length(num)-len, 2);
+index1 = 1;
+index0 = 1;
+for i = 1:1:length(num)
+    if isPacked(i) == 1
+        num1(index1, :) = num(i, 1:1:2);
+        index1 = index1+1;
+    elseif isPacked(i) == 0
+        num0(index0, :) = num(i, 1:1:2);
+        index0 = index0+1;
+    end
+end
+
+figure;
+plot(num1(:, 1), num1(:, 2), '.');
+hold on;
+plot(num0(:, 1), num0(:, 2), '.');
+hold off;
+grid on;
+title('打包后任务点分布图');
+xlabel('经度/°');
+ylabel('纬度/°');
+legend('打包点', '未打包点');

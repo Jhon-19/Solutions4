@@ -53,11 +53,15 @@ index1 = 1;
 index2 = 1;
 for i = 1:1:length(num0)
     if idx(i) == 1
-        cls1_0(index1, :) = num0(i, :);
-        index1 = index1+1;
+        if checkData(num0(i, :))
+            cls1_0(index1, :) = num0(i, :);
+            index1 = index1+1;
+        end
     elseif idx(i) == 2
-        cls2_0(index2, :) = num0(i, :);
-        index2 = index2+1;
+        if checkData(num0(i, :))
+            cls2_0(index2, :) = num0(i, :);
+            index2 = index2+1;
+        end
     end
 end
 figure;
@@ -70,11 +74,15 @@ index1 = 1;
 index2 = 1;
 for i = 1:1:length(num1)
     if idx(i+length(num0)) == 1
-        cls1_1(index1, :) = num1(i, :);
-        index1 = index1+1;
+        if checkData(num1(i, :))
+            cls1_1(index1, :) = num1(i, :);
+            index1 = index1+1;
+        end
     elseif idx(i+length(num0)) == 2
-        cls2_1(index2, :) = num1(i, :);
-        index2 = index2+1;
+        if checkData(num1(i, :))
+            cls2_1(index2, :) = num1(i, :);
+            index2 = index2+1;
+        end
     end
 end
 plot(cls1_1(:, 1), cls1_1(:, 2), '.g');
@@ -95,12 +103,13 @@ fileName = '附件二：会员信息数据.xlsx';
 % close all;
 %提取所需数据
 len = length(num)-1;
-longitudes = zeros(len-2, 1);
-latitudes = zeros(len-2, 1);
+% longitudes = zeros(len-2, 1);
+% latitudes = zeros(len-2, 1);
 index = 1;
 for i = 2:1:len
     [longitudes(index, 1), latitudes(index, 1)] = parseLocation(raw{i, 2});
-    if longitudes(index, 1) > 100
+    if ~checkData([longitudes(index, 1), latitudes(index, 1)])
+%     if longitudes(index, 1) > 100 
         continue;
     end
     index = index+1;
@@ -112,36 +121,37 @@ hold off;
 grid on;
 xlabel('经度/°');
 ylabel('纬度/°');
-legend('未完成任务点1', '未完成任务点2', '已完成任务点1', '已完成任务点2', '会员分布');
-title('全部任务点聚类图');
+legend('未完成任务点1', '未完成任务点2', '已完成任务点1', '已完成任务点2', '等距线');
+text(23.6, 112.8, 'o-会员分布', 'color', 'm');
+title('全部任务点聚类图(去噪版)');
 
-%% 对每个类回归分析
-index1 = 1;
-index2 = 1;
-scores = [scores0; scores1];
-for i = 1:1:length(scores)
-     if idx(i) == 1
-        scores_cls1(index1, :) = scores(i, 1);
-        index1 = index1+1;
-    elseif idx(i) == 2
-        scores_cls2(index2, :) = scores(i, 1);
-        index2 = index2+1;
-     end
-end
-z = zscore(cls1_0);
-x1 = z(:, 1);
-x2 = z(:, 2);
-X = [ones(size(scores_cls1)), x1, x2, x1.^2, x2.^2, x1.*x2];
-[b1,bint1,r1,rint1,status1] = regress(scores_cls1, X);
-disp(['第一个类回归分析: scores = ', num2str(b1(1)), '+', num2str(b1(2)), '*x1+', num2str(b1(3)), '*x2+' ...
-    num2str(b1(4)), '*x1^2+', num2str(b1(5)), '*x2^2+', num2str(b1(6)), '*x1*x2']);
-disp(['p1 = ', num2str(status1(3))]);
-
-z = zscore(cls2_0);
-x1 = z(:, 1);
-x2 = z(:, 2);
-X = [ones(size(scores_cls2)), x1, x2, x1.^2, x2.^2, x1.*x2];
-[b2,bint2,r2,rint2,status2] = regress(scores_cls2, X);
-disp(['第二个类回归分析: scores = ', num2str(b2(1)), '+', num2str(b2(2)), '*x1+', num2str(b2(3)), '*x2+' ...
-    num2str(b2(4)), '*x1^2+', num2str(b2(5)), '*x2^2+', num2str(b2(6)), '*x1*x2']);
-disp(['p2 = ', num2str(status2(3))]);
+ %% 对每个类回归分析
+% index1 = 1;
+% index2 = 1;
+% scores = [scores0; scores1];
+% for i = 1:1:length(scores)
+%      if idx(i) == 1
+%         scores_cls1(index1, :) = scores(i, 1);
+%         index1 = index1+1;
+%     elseif idx(i) == 2
+%         scores_cls2(index2, :) = scores(i, 1);
+%         index2 = index2+1;
+%      end
+% end
+% z = zscore(cls1_0);
+% x1 = z(:, 1);
+% x2 = z(:, 2);
+% X = [ones(size(scores_cls1)), x1, x2, x1.^2, x2.^2, x1.*x2];
+% [b1,bint1,r1,rint1,status1] = regress(scores_cls1, X);
+% disp(['第一个类回归分析: scores = ', num2str(b1(1)), '+', num2str(b1(2)), '*x1+', num2str(b1(3)), '*x2+' ...
+%     num2str(b1(4)), '*x1^2+', num2str(b1(5)), '*x2^2+', num2str(b1(6)), '*x1*x2']);
+% disp(['p1 = ', num2str(status1(3))]);
+% 
+% z = zscore(cls2_0);
+% x1 = z(:, 1);
+% x2 = z(:, 2);
+% X = [ones(size(scores_cls2)), x1, x2, x1.^2, x2.^2, x1.*x2];
+% [b2,bint2,r2,rint2,status2] = regress(scores_cls2, X);
+% disp(['第二个类回归分析: scores = ', num2str(b2(1)), '+', num2str(b2(2)), '*x1+', num2str(b2(3)), '*x2+' ...
+%     num2str(b2(4)), '*x1^2+', num2str(b2(5)), '*x2^2+', num2str(b2(6)), '*x1*x2']);
+% disp(['p2 = ', num2str(status2(3))]);

@@ -20,13 +20,24 @@ end
 figure;
 plot(longitudes, latitudes, '.');
 grid on;
-%经纬度坐标转直角坐标
-cLon = zeros(len-2, 1);
-cLat = zeros(len-2, 1);
-for i = 1:1:len-2
-    [cLon(i, 1), cLat(i, 1)] = LtoC(longitudes(i, 1), latitudes(i, 1));
-end
 
 figure;
-plot(cLon, cLat, '.');
+location = [longitudes, latitudes];
+z_location = zscore(location);
+plot(z_location(:, 1), z_location(:, 2), '.');
 grid on;
+
+x1 = z_location(:, 1);
+x2 = z_location(:, 2);
+X = [ones(size(
+
+%经纬度坐标转直角坐标
+% cLon = zeros(len-2, 1);
+% cLat = zeros(len-2, 1);
+% for i = 1:1:len-2
+%     [cLon(i, 1), cLat(i, 1)] = LtoC(longitudes(i, 1), latitudes(i, 1));
+% end
+% 
+% figure;
+% plot(cLon, cLat, '.');
+% grid on;
