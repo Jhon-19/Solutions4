@@ -1,6 +1,6 @@
 clear;
 clc;
-filePath = 'E:\学习文件\数模\培训\模拟题\模拟题4\题设数据';
+filePath = 'C:\Users\user\Desktop\数模\2020数模训练\4\第四次模拟题\第四次模拟题';
 fileName = '附件二：会员信息数据.xlsx';
 [num, txt, raw] = xlsread([filePath, '\', fileName]);
 close all;

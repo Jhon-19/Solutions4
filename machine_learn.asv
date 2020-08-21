@@ -19,7 +19,6 @@ x1 = num_test';
 trainFcn = 'trainbr';  % Bayesian Regularization backpropagation.
 
 % Create a Fitting Network
-%运行慢可改为200/300
 hiddenLayerSize = 500;
 net = fitnet(hiddenLayerSize,trainFcn);
 
@@ -51,7 +50,7 @@ net.plotFcns = {'plotperform','plottrainstate','ploterrhist', ...
 % Test the Network
 y = net(x);
 y1 = net(x1);
-boundary = 0.4667
+boundary
 for i= 1:1:length(y)
     if(y(i) > boundary)
         y(i) = 1;
@@ -109,8 +108,7 @@ plot(x,y,'-');
 
 %待测数据和结果
 str = ['经度','纬度','任务标价','任务完成与否'];
-disp(str);
-data_test_all = [x1',y1'];
+data_test_all = [str;x1',y1'];
 disp(data_test_all);
 
 

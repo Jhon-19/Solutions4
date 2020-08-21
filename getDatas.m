@@ -1,6 +1,6 @@
-clear;
-clc;
-filePath = 'E:\学习文件\数模\培训\模拟题\模拟题4\题设数据';
+function [num, txt, raw] = getDatas()
+%文件路径改为附件保存路径
+filePath = 'C:\Users\user\Desktop\数模\2020数模训练\4\第四次模拟题\第四次模拟题';
 fileName = '附件一：已结束项目任务数据.xls';
 [num, txt, raw] = xlsread([filePath, '\', fileName]);
 close all;
@@ -20,6 +20,7 @@ for i = 1:1:len
         index1 = index1+1;
     end
 end
+%{
 figure;
 plot3(num0(:, 1), num0(:, 2), num0(:, 3), '.');
 hold on;
@@ -32,3 +33,5 @@ hold on;
 plot(num1(:, 1), num1(:, 2), '.');
 hold off;
 grid on;
+%}
+end
